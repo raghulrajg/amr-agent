@@ -1,0 +1,3 @@
+requests>=2.25
+websocket-client>=1.0
+matplotlib>=3.5   # desktop app only (the command line does not need it)
