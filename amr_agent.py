@@ -101,6 +101,16 @@ def cmd_find() -> None:
         print("Use --host <address> to pick one.")
 
 
+def cmd_scheduler(args) -> None:
+    try:
+        import scheduler_link
+    except ImportError as e:
+        if "paho" in str(e).lower():
+            raise SystemExit("The Task Scheduler link needs paho-mqtt: pip install -r requirements.txt") from None
+        raise
+    sys.exit(scheduler_link.run_from_cli(args))
+
+
 def cmd_gui(host) -> None:
     try:
         from amr_gui import run
@@ -137,6 +147,17 @@ def main() -> None:
     ex.add_argument("file")
     ex.add_argument("--id", help="saved map id instead of the live map")
     sub.add_parser("lidar", parents=[common], help="one lidar scan as x, y points")
+    sc = sub.add_parser("scheduler", parents=[common],
+                        help="follow the Task Scheduler's navigate steps over MQTT (MOVES THE ROBOT)")
+    sc.add_argument("--stations", metavar="FILE",
+                    help="the Task Scheduler's stations.json (x, y, theta of every location)")
+    sc.add_argument("--config", metavar="FILE",
+                    help="settings in the scheduler's agent format, e.g. its agents/robot_01_amr.json")
+    sc.add_argument("--robot-id", help="this robot's id in the scheduler's fleet (default robot_01)")
+    sc.add_argument("--env-file", metavar="FILE", help="broker settings (default: .env in this folder)")
+    sc.add_argument("--test", action="store_true", help="TEST mode: the scheduler's sim/ topics")
+    sc.add_argument("--check", action="store_true",
+                    help="show what the scheduler would see and test the broker login, then exit (nothing moves)")
     args = ap.parse_args()
 
     if args.command in (None, "gui"):
@@ -144,6 +165,9 @@ def main() -> None:
         return
     if args.command == "find":
         cmd_find()
+        return
+    if args.command == "scheduler":
+        cmd_scheduler(args)
         return
 
     host = normalize_host(args.host) if args.host else remembered_host()

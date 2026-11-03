@@ -1,3 +1,5 @@
 requests>=2.25
 websocket-client>=1.0
-matplotlib>=3.5   # desktop app only (the command line does not need it)
+matplotlib>=3.5     # desktop app only (the command line does not need it)
+paho-mqtt>=2.0,<3   # Task Scheduler link (python amr_agent.py scheduler)
+python-dotenv>=1.0  # Task Scheduler link: reads the broker settings from .env

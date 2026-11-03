@@ -11,6 +11,9 @@ env/
 # VS Code
 .vscode/
 
+# Broker settings (copy .env.example)
+.env
+
 # Maps exported from the robot (the app suggests these file names)
 live_map.json
 map_*.json
